@@ -634,8 +634,15 @@ logger = logging.getLogger('patator')
 from multiprocessing.managers import SyncManager, current_process
 import signal
 
-manager = SyncManager()
-manager.start(lambda: signal.signal(signal.SIGINT, signal.SIG_IGN))
+# dirty workaround due to SyncManager.start(initializer) only available since python2.7
+class MyManager(SyncManager):
+  @classmethod
+  def _run_server(cls, registry, address, authkey, serializer, writer):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    super(MyManager, cls)._run_server(registry, address, authkey, serializer, writer)
+
+manager = MyManager()
+manager.start()
 
 ns = manager.Namespace()
 ns.logger_level = logger.level
