@@ -637,7 +637,7 @@ import signal
 # dirty workaround due to SyncManager.start(initializer) only available since python2.7
 class MyManager(SyncManager):
   @classmethod
-  def _run_server(cls, registry, address, authkey, serializer, writer):
+  def _run_server(cls, registry, address, authkey, serializer, writer, initializer=None, initargs=()):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     super(MyManager, cls)._run_server(registry, address, authkey, serializer, writer)
 
